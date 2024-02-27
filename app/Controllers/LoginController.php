@@ -49,8 +49,10 @@ class LoginController extends BaseController{
     
     public function login()
     {
-        $email = $this->request->getPost('username');
-        $password = $this->request->getPost('password');
+    //     $email = $this->request->getPost('username');
+    //     $password = $this->request->getPost('password');
+        $email = $this->request->getGetPost('username');
+        $password = $this->request->getGetPost('password');
 
         $credentials = ['username' => $email];
 
@@ -61,13 +63,13 @@ class LoginController extends BaseController{
             $response = array(
                 'status' => 'true',
                 'errCode' => '02',
-                'msg' => 'Wrong login or inactive account'
+                'msg' => 'Wrong login or inactive account '.$user
             );
             return $this->response->setJSON($response);
         }
 
-        $passwordCheck = password_verify(md5($password), $user['password_hash']);
-        if((md5($password))===$user['password_hash'] ){
+        $passwordCheck = password_verify(md5($password?$password:''), $user['password_hash']);
+        if((md5($password?$password:''))===$user['password_hash'] ){
             $passwordCheck=true;
         }
 // $udata=json_encode($user);
@@ -76,7 +78,7 @@ class LoginController extends BaseController{
             $response = array(
                 'status' => 'true',
                 'errCode' => '02',
-                'msg' => 'Wrong login or inactive account'
+                'msg' => 'Wrong password to login'
             );
             return $this->response->setJSON($response);
         }
