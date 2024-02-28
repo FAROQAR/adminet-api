@@ -51,19 +51,27 @@ class LoginController extends BaseController{
     {
     //     $email = $this->request->getPost('username');
     //     $password = $this->request->getPost('password');
-        $email = $this->request->getGetPost('username');
-        $password = $this->request->getGetPost('password');
+        $email = $this->request->getPost('username');
+        $password = $this->request->getPost('password');
+$req=$this->request->getRawInput();
 
-        $credentials = ['username' => $email];
+$response = array(
+    'status' => 'true',
+    'errCode' => '02',
+    'msg' => 'Wrong login or inactive account '.json_encode($req)
+);
+return $this->response->setJSON($response);
+
+        $credentials = ['username' => $req];
 
         $user = $this->model->where($credentials)
             ->first();
-
-        if (! $user) {
+        $validUser=count($user)>0?true:false;
+        if (! $validUser) {
             $response = array(
                 'status' => 'true',
                 'errCode' => '02',
-                'msg' => 'Wrong login or inactive account '.$user
+                'msg' => 'Wrong login or inactive account '.$req['username']
             );
             return $this->response->setJSON($response);
         }
